@@ -44,7 +44,8 @@ class ProviderApp(AppClass):
         # Configure logger.
         self.logger = logging.getLogger('everpad-provider')
         self.logger.setLevel(logging.DEBUG)
-        fh = logging.FileHandler('/tmp/everpad-provider.log')
+        fh = logging.FileHandler(
+            os.path.expanduser('~/.everpad/logs/everpad-provider.log'))
         fh.setLevel(logging.DEBUG)
         formatter = logging.Formatter(
             '%(asctime)s - %(name)s - %(levelname)s - %(message)s')
