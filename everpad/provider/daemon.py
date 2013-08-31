@@ -51,6 +51,7 @@ class ProviderApp(AppClass):
             '%(asctime)s - %(name)s - %(levelname)s - %(message)s')
         fh.setFormatter(formatter)
         self.logger.addHandler(fh)
+        self.logger.debug('Provider started.')
 
     @Slot(str)
     def on_authenticated(self, token):
