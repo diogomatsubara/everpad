@@ -79,9 +79,16 @@ class EditorTestCase(unittest.TestCase):
             place='',
         ).struct))
 
+    def _get_editor(self):
+        editor = Editor(self.note)
+        #XXX: matsubara: This call to page.parent() avoids a seg fault after
+        # the test run. I have no idea why.
+        editor.note_edit.widget.page().parent()
+        return editor
+
     def test_content_nochange(self):
         """Test content nochange"""
-        editor = Editor(self.note)
+        editor = self._get_editor()
         self.assertEqual(
             editor.note_edit.content,
             "New note content",
@@ -95,7 +102,7 @@ class EditorTestCase(unittest.TestCase):
 
     def test_content_changing(self):
         """Test content changing"""
-        editor = Editor(self.note)
+        editor = self._get_editor()
         for prev, current in CHANGING_CONTENTS:
             editor.note_edit.content = prev
             self.assertEqual(
@@ -105,7 +112,7 @@ class EditorTestCase(unittest.TestCase):
 
     def test_title_nochange(self):
         """Test title nochange"""
-        editor = Editor(self.note)
+        editor = self._get_editor()
         self.assertEqual(
             editor.note_edit.title,
             "New note",
@@ -128,7 +135,7 @@ class EditorTestCase(unittest.TestCase):
         """Test content nochange"""
         content = '<a href="evernote:///view/123/123/123/">note link</a>'
         self.note.content = content
-        editor = Editor(self.note)
+        editor = self._get_editor()
         self.assertEqual(
             editor.note_edit.content,
             content,
@@ -149,7 +156,7 @@ class EditorTestCase(unittest.TestCase):
         link = "evernote:///view/123/123/{guid}/123/".format(
             guid=guid,
         )
-        editor = Editor(self.note)
+        editor = self._get_editor()
         editor.note_edit.link_clicked(QUrl(link))
 
         self.assertEqual(

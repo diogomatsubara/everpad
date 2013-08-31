@@ -210,6 +210,7 @@ class MethodsCase(unittest.TestCase):
     def setUp(self):
         self.service = ProviderService()
         self.session = get_db_session()
+        models.Note.session = self.session  # TODO: fix that shit
         self.service._session = self.session
         self.service.qobject = MagicMock()
         self.service.app = MagicMock()
@@ -434,10 +435,22 @@ class MethodsCase(unittest.TestCase):
 
     def test_create_note(self):
         """Test create note"""
+        # First create a notebook to hold the note.
+        notebook = models.Notebook(
+            name='foobar',
+            action=const.ACTION_NONE,
+            default=True,
+        )
+        self.service.session.add(notebook)
+        self.service.session.commit()
+
+        nb = self.service.session.query(models.Notebook).first()
+
         title = 'note'
         note_btype = btype.Note(
             title=title,
             tags=[],
+            notebook_id=nb.id,
             id=const.NONE_ID,
         )
 
@@ -453,7 +466,17 @@ class MethodsCase(unittest.TestCase):
 
     def test_update_note(self):
         """Test update note"""
-        note = self._create_note()
+        # First create a notebook to hold the note.
+        notebook = models.Notebook(
+            name='foobar',
+            action=const.ACTION_NONE,
+            default=True,
+        )
+        self.service.session.add(notebook)
+        self.service.session.commit()
+
+        nb = self.service.session.query(models.Notebook).first()
+        note = self._create_note(notebook_id=nb.id)
 
         new_title = 'title'
 
